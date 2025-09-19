@@ -1,0 +1,14 @@
+CREATE TABLE IF NOT EXISTS `multas` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(50) DEFAULT NULL,
+  `apellido` varchar(50) DEFAULT NULL,
+  `id_multado` varchar(50) DEFAULT NULL,
+  `motivo` text DEFAULT NULL,
+  `monto` int(11) DEFAULT 50,
+  `autor` varchar(100) DEFAULT NULL,
+  `pagada` tinyint(1) DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT IGNORE INTO `items` (`item`, `label`, `limit`, `can_remove`, `type`, `usable`, `metadata`, `desc`, `weight`) VALUES 
+('fine_book', 'Fine Book', 200, 1, 'item_standard', 1, '{}', 'book used to issue fines', 0.1);
