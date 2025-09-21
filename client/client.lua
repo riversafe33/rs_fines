@@ -1,4 +1,5 @@
 local Menu = exports.vorp_menu:GetMenuData()
+local VORPcore = exports.vorp_core:GetCore()
 local Blips = {}
 local NPCs = {}
 
@@ -51,6 +52,41 @@ RegisterNUICallback("recolectarMultas", function(_, cb)
     TriggerServerEvent("rs_fines:recolectarMultas")
     cb({})
 end)
+
+RegisterNUICallback("eliminarMulta", function(data, cb)
+    TriggerServerEvent("rs_fines:eliminarMulta", data.id)
+    cb({})
+end)
+
+RegisterNetEvent("rs_fines:multaEliminada")
+AddEventHandler("rs_fines:multaEliminada", function()
+    VORPcore.NotifyLeft( Config.Textos.Notify.collect, Config.Textos.Notify.multaEliminada, "toasts_mp_generic", "toast_mp_customer_service", 4000, "COLOR_GREEN" )
+end)
+
+RegisterNetEvent("rs_fines:mostrarMenuPago")
+AddEventHandler("rs_fines:mostrarMenuPago", function(multas)
+    local menuElements = {}
+
+    for _, multa in ipairs(multas) do
+        table.insert(menuElements, {
+            label = Config.Textos.menuamount .. multa.label,
+            value = multa.value,
+            desc = Config.Textos.menureason .. multa.desc,
+        })
+    end
+
+    Menu.Open("default", GetCurrentResourceName(), "menuPagoMultas", {
+        title = "Pending Fines",
+        align = Config.Align,
+        elements = menuElements
+    }, function(data, menu)
+        TriggerServerEvent("rs_fines:pagarMulta", data.current.value)
+        Menu.CloseAll()
+    end, function(data, menu)
+        Menu.CloseAll()
+    end)
+end)
+
 
 RegisterNetEvent("rs_fines:mostrarMenuPago")
 AddEventHandler("rs_fines:mostrarMenuPago", function(multas)
