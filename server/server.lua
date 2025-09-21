@@ -140,7 +140,8 @@ AddEventHandler("rs_fines:solicitarMultas", function()
     local query = [[
         SELECT 
             id, nombre, apellido, id_multado, motivo, monto, autor, 
-            CAST(pagada AS UNSIGNED) AS pagada 
+            CAST(pagada AS UNSIGNED) AS pagada,
+            CAST(recolectada AS UNSIGNED) AS recolectada
         FROM multas
     ]]
     local params = {}
@@ -171,7 +172,7 @@ AddEventHandler("rs_fines:recolectarMultas", function()
         return
     end
 
-    local query = 'SELECT * FROM multas WHERE pagada = 1'
+    local query = 'SELECT * FROM multas WHERE pagada = 1 AND recolectada = 0'
     local params = {}
 
     if onlyOwn then
@@ -186,23 +187,30 @@ AddEventHandler("rs_fines:recolectarMultas", function()
         end
 
         local total = 0
-        local idsToDelete = {}
+        local idsToUpdate = {}
 
         for _, multa in ipairs(result) do
             if not onlyOwn or multa.autor == autorCompleto then
                 total = total + multa.monto
-                table.insert(idsToDelete, multa.id)
+                table.insert(idsToUpdate, multa.id)
             end
         end
 
         if total > 0 then
             Character.addCurrency(0, total)
 
-            for _, id in ipairs(idsToDelete) do
-                MySQL.execute('DELETE FROM multas WHERE id = ?', {id})
+            for _, id in ipairs(idsToUpdate) do
+                MySQL.update('UPDATE multas SET recolectada = 1 WHERE id = ?', {id})
             end
 
             VORPcore.NotifyLeft(src, Config.Textos.Notify.collect, Config.Textos.Notify.received .. total .. "$ " .. Config.Textos.Notify.amount, "toasts_mp_generic", "toast_mp_customer_service", 5000, "COLOR_GREEN")
         end
     end)
+end)
+
+RegisterServerEvent("rs_fines:eliminarMulta")
+AddEventHandler("rs_fines:eliminarMulta", function(id)
+    local src = source
+    MySQL.execute('DELETE FROM multas WHERE id = ?', { id })
+    TriggerClientEvent("rs_fines:multaEliminada", src)
 end)
