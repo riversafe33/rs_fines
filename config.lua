@@ -101,6 +101,8 @@ Config.Textos = {
     estadoLabel = "Status:",
     menuamount = "Fine in the amount of ",
     menureason = "Reason : ",
+    botonEliminar = "Delete",
+    estadoRecolectada = "Collected",
     Notify = {
         collect = "Fine System",
         notpermisitem = "You don't have permission to use this item.",
@@ -114,5 +116,6 @@ Config.Textos = {
         amount = " in paid fines.",
         notfinetocollect = "There are no paid fines to collect.",
         notpermistocollect = "You don't have permission to collect fines.",
+        multaEliminada = "Fine successfully removed",
     }
 }
