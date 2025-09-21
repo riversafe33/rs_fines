@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS `multas` (
   `monto` int(11) DEFAULT 50,
   `autor` varchar(100) DEFAULT NULL,
   `pagada` tinyint(1) DEFAULT 0,
+  `recolectada` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`)
 );
 
