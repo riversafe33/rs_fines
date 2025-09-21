@@ -134,11 +134,33 @@
       word-wrap: break-word;
       text-align: center;
     }
+
+    .estado.recolectada {
+      color: #8b4513;
+      font-weight: bold;
+    }
+
+    #multasPendientes::-webkit-scrollbar {
+      width: 0px;
+      background: transparent;
+    }
+
+    #multasPendientes.scroll-visible::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #multasPendientes.scroll-visible::-webkit-scrollbar-thumb {
+      background-color:  #916b3a;
+      border-radius: 4px;
+      border: 2px solid #000000;
+    }
+
+    #multasPendientes.scroll-visible::-webkit-scrollbar-track {
+      background-color: #6d5b438e;
+    }
   </style>
 </head>
 <body>
-
-  <!-- Formulario original -->
   <div class="formulario" id="formulario">
     <span id="cerrar">✖</span>
     <h1 id="formularioTitulo"></h1>
@@ -162,25 +184,25 @@
     </form>
   </div>
 
-  <!-- Panel del sheriff -->
   <div class="formulario" id="panelSheriff">
     <span id="cerrarSheriff">✖</span>
     <h1 id="panelTitulo"></h1>
     <input type="text" id="buscadorMultas" placeholder="">
-    <div id="multasPendientes"></div>
+    <div id="multasPendientes" class="scroll-visible"></div>
     <button onclick="recolectarMultas()" id="botonRecolectar"></button>
   </div>
 
-  <!-- Prompt flotante -->
   <div class="container-prompt" id="prompt">
     <div class="title-prompt" id="promptText"></div>
   </div>
 
   <script>
+    let textosGlobales = {};
+
     window.addEventListener('message', function(event) {
       const data = event.data;
+      textosGlobales = data.textos || {};
 
-      // Elementos del formulario
       const formulario = document.getElementById('formulario');
       const formularioTitulo = document.getElementById('formularioTitulo');
       const labelNombre = document.getElementById('labelNombre');
@@ -191,29 +213,26 @@
       const botonRegistrar = document.getElementById('botonRegistrar');
       const formMulta = document.getElementById('formMulta');
 
-      // Elementos del panel del sheriff
       const panelSheriff = document.getElementById('panelSheriff');
       const panelTitulo = document.getElementById('panelTitulo');
       const buscadorMultas = document.getElementById('buscadorMultas');
       const botonRecolectar = document.getElementById('botonRecolectar');
       const multasPendientes = document.getElementById('multasPendientes');
 
-      // Prompt flotante
       const prompt = document.getElementById('prompt');
       const promptText = document.getElementById('promptText');
 
-      // Aplicar traducciones si vienen en el mensaje
-      if (data.textos) {
-        formularioTitulo.textContent = data.textos.formularioTitulo || '';
-        labelNombre.textContent = data.textos.labelNombre || '';
-        labelApellido.textContent = data.textos.labelApellido || '';
-        labelPanelID.textContent = data.textos.labelPanelID || '';
-        labelPanelMotivo.textContent = data.textos.labelPanelMotivo || '';
-        labelPanelMonto.textContent = data.textos.labelPanelMonto || '';
-        botonRegistrar.textContent = data.textos.botonRegistrar || '';
-        panelTitulo.textContent = data.textos.panelTitulo || '';
-        buscadorMultas.placeholder = data.textos.buscadorPlaceholder || '';
-        botonRecolectar.textContent = data.textos.botonRecolectar || '';
+      if (textosGlobales) {
+        formularioTitulo.textContent = textosGlobales.formularioTitulo || '';
+        labelNombre.textContent = textosGlobales.labelNombre || '';
+        labelApellido.textContent = textosGlobales.labelApellido || '';
+        labelPanelID.textContent = textosGlobales.labelPanelID || '';
+        labelPanelMotivo.textContent = textosGlobales.labelPanelMotivo || '';
+        labelPanelMonto.textContent = textosGlobales.labelPanelMonto || '';
+        botonRegistrar.textContent = textosGlobales.botonRegistrar || '';
+        panelTitulo.textContent = textosGlobales.panelTitulo || '';
+        buscadorMultas.placeholder = textosGlobales.buscadorPlaceholder || '';
+        botonRecolectar.textContent = textosGlobales.botonRecolectar || '';
       }
 
       if (data.action === 'abrirFormulario') {
@@ -226,55 +245,72 @@
       }
 
       if (data.action === 'actualizarMultas') {
-        multasPendientes.innerHTML = '';
-        const todasLasMultas = data.multas || [];
-
-        function renderMultas(filtro = '') {
-          multasPendientes.innerHTML = '';
-          const filtroLower = filtro.toLowerCase();
-
-          todasLasMultas.forEach(multa => {
-            const nombreCompleto = `${multa.nombre} ${multa.apellido}`.toLowerCase();
-            if (!nombreCompleto.includes(filtroLower)) return;
-
-            const estadoTexto = parseInt(multa.pagada) === 1
-              ? data.textos?.estadoPagada || 'Pagada'
-              : data.textos?.estadoPendiente || 'Sin pagar';
-
-            const estadoClase = parseInt(multa.pagada) === 1 ? 'pagada' : 'pendiente';
-
-            const div = document.createElement('div');
-            div.className = 'itemMulta';
-            div.dataset.id = multa.id;
-
-            div.innerHTML = `
-              <strong>${multa.nombre} ${multa.apellido}</strong><br>
-              ${data.textos?.labelID || ""} ${multa.id_multado}<br>
-              ${data.textos?.labelMotivo || ""} ${multa.motivo}<br>
-              ${data.textos?.labelMonto || ""} ${multa.monto}$<br>
-              ${data.textos?.autorLabel || ""} ${multa.autor}<br>
-              ${data.textos?.estadoLabel || ""} <span class="estado ${estadoClase}">${estadoTexto}</span>
-            `;
-            multasPendientes.appendChild(div);
-          });
-        }
-
-        renderMultas();
-
-        buscadorMultas.addEventListener('input', function() {
-          renderMultas(this.value);
-        });
+        renderMultas(data.multas || []);
       }
 
       if (data.type === 'showprompt') {
         promptText.textContent = data.text || '';
         prompt.style.display = 'block';
+        setTimeout(() => {
+          prompt.style.display = 'none';
+        }, 3000);
       }
 
       if (data.type === 'hideprompt') {
         prompt.style.display = 'none';
       }
     });
+
+    function renderMultas(todasLasMultas) {
+      const multasPendientes = document.getElementById('multasPendientes');
+      const buscadorMultas = document.getElementById('buscadorMultas');
+      multasPendientes.innerHTML = '';
+
+      function filtrarYMostrar(filtro = '') {
+        multasPendientes.innerHTML = '';
+        const filtroLower = filtro.toLowerCase();
+
+        todasLasMultas.forEach(multa => {
+          const nombreCompleto = `${multa.nombre} ${multa.apellido}`.toLowerCase();
+          if (!nombreCompleto.includes(filtroLower)) return;
+
+          const estadoTexto = multa.recolectada == 1
+            ? textosGlobales.estadoRecolectada || 'Recolectada'
+            : (parseInt(multa.pagada) === 1
+                ? textosGlobales.estadoPagada || 'Pagada'
+                : textosGlobales.estadoPendiente || 'Sin pagar');
+
+          const estadoClase = multa.recolectada == 1
+            ? 'recolectada'
+            : (parseInt(multa.pagada) === 1 ? 'pagada' : 'pendiente');
+
+          const div = document.createElement('div');
+          div.className = 'itemMulta';
+          div.dataset.id = multa.id;
+
+          div.innerHTML = `
+            <strong>${multa.nombre} ${multa.apellido}</strong><br>
+            ${textosGlobales.labelID || ""} ${multa.id_multado}<br>
+            ${textosGlobales.labelMotivo || ""} ${multa.motivo}<br>
+            ${textosGlobales.labelMonto || ""} ${multa.monto}$<br>
+            ${textosGlobales.autorLabel || ""} ${multa.autor}<br>
+            ${textosGlobales.estadoLabel || ""} <span class="estado ${estadoClase}">${estadoTexto}</span>
+          `;
+
+          if (multa.recolectada == 1) {
+            div.innerHTML += `<br><button onclick="eliminarMulta(${multa.id})">${textosGlobales.botonEliminar || 'Eliminar'}</button>`;
+          }
+
+          multasPendientes.appendChild(div);
+        });
+      }
+
+      filtrarYMostrar();
+
+      buscadorMultas.addEventListener('input', function() {
+        filtrarYMostrar(this.value);
+      });
+    }
 
     document.getElementById('cerrar').addEventListener('click', function() {
       document.getElementById('formulario').style.display = 'none';
@@ -311,6 +347,19 @@
       });
       document.getElementById('panelSheriff').style.display = 'none';
     }
+
+    function eliminarMulta(id) {
+
+      fetch(`https://${GetParentResourceName()}/eliminarMulta`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id })
+      });
+
+      const multaElemento = document.querySelector(`.itemMulta[data-id="${id}"]`);
+      if (multaElemento) {
+        multaElemento.remove();
+      }
+    }
   </script>
 </body>
-</html>
