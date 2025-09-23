@@ -52,13 +52,21 @@ AddEventHandler("rs_fines:guardarMulta", function(data)
     local targetSrc = targetUser.source
 
     MySQL.insert('INSERT INTO multas (nombre, apellido, id_multado, motivo, autor, monto, pagada) VALUES (?, ?, ?, ?, ?, ?, ?)', {
-        data.nombre, data.apellido, idMultado, data.motivo, autor, data.monto, 0
+        data.nombre,
+        data.apellido,
+        idMultado,
+        data.motivo,
+        autor,
+        tonumber(string.format("%.2f", data.monto)),
+        0
     })
 
     VORPcore.NotifyLeft(src, Config.Textos.Notify.collect, Config.Textos.Notify.correctfine, "toasts_mp_generic", "toast_mp_customer_service", 5000, "COLOR_GREEN")
 
-    VORPcore.NotifyLeft(targetSrc, Config.Textos.Notify.collect, Config.Textos.Notify.recivefine .. " " .. data.monto .. "$ " , "toasts_mp_generic", "toast_mp_customer_service", 6000, "COLOR_BLUE")
+    VORPcore.NotifyLeft(targetSrc, Config.Textos.Notify.collect, Config.Textos.Notify.recivefine .. " " .. string.format("%.2f", data.monto) .. "$", "toasts_mp_generic", "toast_mp_customer_service", 6000, "COLOR_BLUE")
 end)
+
+
 
 RegisterServerEvent("rs_fines:abrirMenuPago")
 AddEventHandler("rs_fines:abrirMenuPago", function()
@@ -91,9 +99,12 @@ AddEventHandler("rs_fines:pagarMulta", function(multaId)
     MySQL.query('SELECT * FROM multas WHERE id = ?', { multaId }, function(result)
         if #result > 0 then
             local multa = result[1]
-            if Character.money >= multa.monto then
-                Character.removeCurrency(0, multa.monto)
+            local montoMulta = tonumber(string.format("%.2f", multa.monto))
+
+            if Character.money >= montoMulta then
+                Character.removeCurrency(0, montoMulta)
                 MySQL.update('UPDATE multas SET pagada = 1 WHERE id = ?', { multaId })
+
                 VORPcore.NotifyLeft(src, Config.Textos.Notify.collect, Config.Textos.Notify.corectpay, "toasts_mp_generic", "toast_mp_customer_service", 5000, "COLOR_GREEN")
             else
                 VORPcore.NotifyLeft(src, Config.Textos.Notify.collect, Config.Textos.Notify.notmoney, "toasts_mp_generic", "toast_mp_customer_service", 4000, "COLOR_RED")
@@ -101,6 +112,7 @@ AddEventHandler("rs_fines:pagarMulta", function(multaId)
         end
     end)
 end)
+
 
 local onlyOwn = Config.onlyOwn
 
