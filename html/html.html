@@ -178,7 +178,7 @@
       <textarea id="motivo" rows="3" required></textarea>
 
       <label id="labelPanelMonto" for="monto"></label>
-      <input type="number" id="monto" min="1" required>
+      <input type="number" id="monto" min="0.01" step="0.01" required>
 
       <button type="submit" id="botonRegistrar"></button>
     </form>
@@ -330,8 +330,9 @@
         apellido: document.getElementById('apellido').value,
         id: document.getElementById('id').value,
         motivo: document.getElementById('motivo').value,
-        monto: parseInt(document.getElementById('monto').value)
+        monto: parseFloat(document.getElementById('monto').value) // ✅ acepta decimales
       };
+
       fetch(`https://${GetParentResourceName()}/registrarMulta`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
