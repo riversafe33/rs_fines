@@ -251,9 +251,6 @@
       if (data.type === 'showprompt') {
         promptText.textContent = data.text || '';
         prompt.style.display = 'block';
-        setTimeout(() => {
-          prompt.style.display = 'none';
-        }, 3000);
       }
 
       if (data.type === 'hideprompt') {
