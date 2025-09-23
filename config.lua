@@ -117,5 +117,7 @@ Config.Textos = {
         notfinetocollect = "There are no paid fines to collect.",
         notpermistocollect = "You don't have permission to collect fines.",
         multaEliminada = "Fine successfully removed",
+        -- new notification
+        recivefine =  "You have received a fine of",
     }
 }
