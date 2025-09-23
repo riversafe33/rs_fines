@@ -1,2 +1,2 @@
 ALTER TABLE multas ADD COLUMN recolectada TINYINT(1) DEFAULT 0;
-
+ALTER TABLE multas MODIFY monto DECIMAL(10,2);
