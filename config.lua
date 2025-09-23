@@ -70,11 +70,11 @@ Config.NPC = {
   -- List of coordinates where NPCs will be placed if EnableNPCs is true
   -- Each entry is a vector4 with position (x, y, z) and heading (w)
   coords = {
-    vector4(-810.51, -1275.36, 43.64, 193.4), -- Blackwater NPC
-    vector4(-305.53, 772.91, 118.7, 328.94),  -- Valentine NPC
-    vector4(2646.99, -1294.75, 52.25, 310.81),-- Saint Denis NPC
-    vector4(1291.23, -1303.29, 77.04, 325.85),-- Rhodes NPC
-    vector4(2939.02, 1286.95, 44.65, 350.03), -- Annesburg NPC
+    vector4(-810.51, -1275.36, 43.64, 193.4),
+    vector4(-306.18, 773.53, 118.7, 327.32),
+    vector4(2646.99, -1294.75, 52.25, 310.81),
+    vector4(1291.23, -1303.29, 77.04, 325.85),
+    vector4(2939.02, 1286.95, 44.65, 350.03),
   }
 }
 
