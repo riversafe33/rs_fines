@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS `multas` (
   `apellido` varchar(50) DEFAULT NULL,
   `id_multado` varchar(50) DEFAULT NULL,
   `motivo` text DEFAULT NULL,
-  `monto` int(11) DEFAULT 50,
+  `monto` decimal(10,2) DEFAULT NULL,
   `autor` varchar(100) DEFAULT NULL,
   `pagada` tinyint(1) DEFAULT 0,
   `recolectada` tinyint(1) DEFAULT 0,
