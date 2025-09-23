@@ -49,12 +49,15 @@ AddEventHandler("rs_fines:guardarMulta", function(data)
 
     local targetChar = targetUser.getUsedCharacter
     local idMultado = targetChar.charIdentifier
+    local targetSrc = targetUser.source
 
     MySQL.insert('INSERT INTO multas (nombre, apellido, id_multado, motivo, autor, monto, pagada) VALUES (?, ?, ?, ?, ?, ?, ?)', {
         data.nombre, data.apellido, idMultado, data.motivo, autor, data.monto, 0
     })
 
     VORPcore.NotifyLeft(src, Config.Textos.Notify.collect, Config.Textos.Notify.correctfine, "toasts_mp_generic", "toast_mp_customer_service", 5000, "COLOR_GREEN")
+
+    VORPcore.NotifyLeft(targetSrc, Config.Textos.Notify.collect, Config.Textos.Notify.recivefine .. " " .. data.monto .. "$ " , "toasts_mp_generic", "toast_mp_customer_service", 6000, "COLOR_BLUE")
 end)
 
 RegisterServerEvent("rs_fines:abrirMenuPago")
