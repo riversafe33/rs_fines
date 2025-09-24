@@ -1,3 +1,7 @@
+To improve my PC and continue offering things
+
+https://ko-fi.com/riversafe33
+
 Fine system that can also be used for police or comercial invoices 
 
 1 - Item to create the fine or invoice 
