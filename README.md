@@ -1,3 +1,5 @@
+# Remove -main the folder should be named just rs_fines
+
 To improve my PC and continue offering free scripts: https://ko-fi.com/riversafe33
 
 Fine system that can also be used for police or comercial invoices 
